@@ -5,6 +5,22 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>7af08b9b-1ac6-4662-9d05-fcfc8d736cb4</UserSecretsId>
   </PropertyGroup>
 
+
+  <ItemGroup>
+    <!-- NuGet - Microsoft.Data.SqlClient -->
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+
+    <!-- NuGet - Newtonsoft Json deserialisation  -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Model\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
 </Project>
