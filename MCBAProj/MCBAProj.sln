@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1704.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCBA", "MCBA\MCBA.csproj", "{D1614B21-919D-4E34-87AD-709AA8BB01F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCBABackend", "MCBABackend\MCBABackend.csproj", "{14B73BB6-EB47-4221-BC35-2AE606F5CF22}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1614B21-919D-4E34-87AD-709AA8BB01F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1614B21-919D-4E34-87AD-709AA8BB01F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1614B21-919D-4E34-87AD-709AA8BB01F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1614B21-919D-4E34-87AD-709AA8BB01F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14B73BB6-EB47-4221-BC35-2AE606F5CF22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14B73BB6-EB47-4221-BC35-2AE606F5CF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14B73BB6-EB47-4221-BC35-2AE606F5CF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14B73BB6-EB47-4221-BC35-2AE606F5CF22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {937F2690-8CE3-4C08-ADBB-CE21F87E2DDF}
+	EndGlobalSection
+EndGlobal

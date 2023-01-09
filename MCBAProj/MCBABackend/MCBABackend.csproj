@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>7af08b9b-1ac6-4662-9d05-fcfc8d736cb4</UserSecretsId>
   </PropertyGroup>
-
 
   <ItemGroup>
     <!-- NuGet - Microsoft.Data.SqlClient -->
@@ -15,12 +12,14 @@
 
     <!-- NuGet - Newtonsoft Json deserialisation  -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+
+   <!-- NuGet - Microsoft Extension Config Json -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Model\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
