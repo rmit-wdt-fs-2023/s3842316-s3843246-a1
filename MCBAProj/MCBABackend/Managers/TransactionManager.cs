@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using MCBA.Model;
+using MCBA.Utils;
 namespace MCBA.Managers;
 
 public class TransactionManager
@@ -18,18 +19,21 @@ public class TransactionManager
         connection.Open();
 
         using var cmd = connection.CreateCommand();
-
         cmd.CommandText =
-            @"INSERT INTO dbo.Transaction (TransactionType, AccountNumber, " +
-        "DestinationAccountNumber, Amount, Comment, TransactionTimeUtc)" +
-        "VALUES ( @transactionType, @accountNumber, @destinationAccountNumber, " +
-        "@amount, @comment, @transactionTimeUtc)";
+            @"INSERT INTO dbo.[Transaction] (TransactionType, AccountNumber, DestinationAccountNumber, Amount, " +
+            "Comment, TransactionTimeUtc)" +
+            "VALUES (@transactionType, @accountNumber, @destinationAccountNumber, @amount, " +
+            "@comment, @transactionTimeUtc)";
 
         cmd.Parameters.AddWithValue("transactionType", transaction.TransactionType);
         cmd.Parameters.AddWithValue("accountNumber", transaction.AccountNumber);
-        cmd.Parameters.AddWithValue("destinationAccountNumber", transaction.DestinationAccountNumber);
+
+        cmd.Parameters.AddWithValue("destinationAccountNumber", transaction.DestinationAccountNumber.GetObjOrDbNull());
+
         cmd.Parameters.AddWithValue("amount", transaction.Amount);
-        cmd.Parameters.AddWithValue("comment", transaction.Comment);
+
+        cmd.Parameters.AddWithValue("comment", transaction.Comment.GetObjOrDbNull());
+
         cmd.Parameters.AddWithValue("transactionTimeUtc", transaction.TransactionTimeUtc);
 
         cmd.ExecuteNonQuery();

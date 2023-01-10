@@ -20,7 +20,7 @@ public class AccountManager
         using var cmd = connection.CreateCommand();
 
         cmd.CommandText =
-            @"INSERT INTO dbo.Account (AccountNumber, AccountType, CustomerID, Balance)" +
+            @"INSERT INTO dbo.[Account] (AccountNumber, AccountType, CustomerID, Balance)" +
         "VALUES (@accountNumber, @accountType, @customerID, @balance)";
         cmd.Parameters.AddWithValue("accountNumber", account.AccountNumber);
         cmd.Parameters.AddWithValue("accountType", account.AccountType);

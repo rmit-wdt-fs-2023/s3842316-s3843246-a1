@@ -15,16 +15,16 @@ public class Account
 {
     public int AccountNumber { get; init; }
     public char AccountType { get; init; }
-    public int CustomerID { get; init; }
-    public decimal Balance { get; init; }
+    public int CustomerID { get; set; }
+    public decimal Balance { get; set; }
     public List<Transaction> Transactions { get; init; }
 }
 
 public class Transaction
 {
-    public char TransactionType { get; init; }
-    public int AccountNumber { get; init; }
-    public int DestinationAccountNumber { get; init; }
+    public char TransactionType { get; set; }
+    public int AccountNumber { get; set; }
+    public int? DestinationAccountNumber { get; init; }
     public decimal Amount { get; init; }
     public string? Comment { get; init; }
     public DateTime TransactionTimeUtc { get; init; }
@@ -33,6 +33,6 @@ public class Transaction
 public class Credential
 {
     public int LoginID { get; init; }
-    public int CustomerID { get; init; }
+    public int CustomerID { get; set; }
     public string PasswordHash { get; init; }
 }

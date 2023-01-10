@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using MCBA.Model;
+using MCBA.Utils;
 namespace MCBA.Managers;
 
 public class CustomerManager
@@ -33,13 +34,14 @@ public class CustomerManager
         using var cmd = connection.CreateCommand();
 
         cmd.CommandText =
-            @"INSERT INTO dbo.Customer (CustomerID, Name, Address, City, Postcode)" +
-        "VALUES (@customerId, @name, @address, @city, @postcode)";
+            @"INSERT INTO dbo.[Customer] (CustomerID, Name, Address, City, Postcode)" +
+            "VALUES (@customerId, @name, @address, @city, @postcode)";
         cmd.Parameters.AddWithValue("customerId", customer.CustomerID);
         cmd.Parameters.AddWithValue("name", customer.Name);
-        cmd.Parameters.AddWithValue("address", customer.Address);
-        cmd.Parameters.AddWithValue("city", customer.City);
-        cmd.Parameters.AddWithValue("postcode", customer.PostCode);
+
+        cmd.Parameters.AddWithValue("address", customer.Address.GetObjOrDbNull());
+        cmd.Parameters.AddWithValue("city", customer.City.GetObjOrDbNull());
+        cmd.Parameters.AddWithValue("postcode", customer.PostCode.GetObjOrDbNull());
 
         cmd.ExecuteNonQuery();
     }

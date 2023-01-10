@@ -20,7 +20,7 @@ public class CredentialManager
         using var cmd = connection.CreateCommand();
 
         cmd.CommandText =
-            @"INSERT INTO dbo.Login (LoginID, CustomerID, PasswordHash)" +
+            @"INSERT INTO dbo.[Login] (LoginID, CustomerID, PasswordHash)" +
         "VALUES (@loginID, @customerID, @passwordHash)";
         cmd.Parameters.AddWithValue("loginID", credential.LoginID);
         cmd.Parameters.AddWithValue("customerID", credential.CustomerID);
