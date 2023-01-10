@@ -4,6 +4,13 @@ namespace MCBA;
 
 public class MCBA
 {
+    private readonly string savedusername = "RishRao";
+    private readonly string savedpassword = "123";
+    private string username = "";
+    private string password = "";
+    private bool login = false;
+    private ConsoleKeyInfo key;
+
     private static void Main()
     {
 
@@ -19,8 +26,8 @@ public class MCBA
 
 			Console.Write("\n");
 			var menu =
-					"""
-					--- Rish Rao ---
+					$"""
+					--- {mcba.username} ---
 					[1] Deposit
 					[2] Withdraw
 					[3] Transfer
@@ -64,14 +71,9 @@ public class MCBA
 
 	public void Login()
 	{
-        string savedusername = "RishRao";
-        string savedpassword = "123";
-        string username = "";
-        string password = "";
-        bool login = false;
-        ConsoleKeyInfo key;
-
-
+        login = false;
+        username = "";
+        password = "";
         while (!login)
         {
 
