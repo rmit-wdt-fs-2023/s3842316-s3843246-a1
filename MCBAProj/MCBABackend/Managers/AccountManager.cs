@@ -1,6 +1,9 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using MCBA.Model;
+using MCBAConnection;
+using MCBA.Utils;
+
 namespace MCBA.Managers;
 
 public class AccountManager
@@ -28,5 +31,28 @@ public class AccountManager
         cmd.Parameters.AddWithValue("balance", account.Balance);
 
         cmd.ExecuteNonQuery();
+    }
+
+    public List<Account> GetAccounts(int customerId)
+    {
+        using var connection = new SqlConnection(_connectionStr);
+        connection.Open();
+
+        using var cmd = connection.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM dbo.[Account] WHERE CustomerID = @customerId";
+        cmd.Parameters.AddWithValue(nameof(customerId), customerId);
+
+        var transactionManager = new TransactionManager(_connectionStr);
+
+        return cmd.GetDataTable().Select().Select(x => new Account
+        {
+            AccountNumber = x.Field<int>(nameof(Account.AccountNumber)),
+            AccountType = char.Parse(x.Field<string>(nameof(Account.AccountType))),
+            CustomerID = x.Field<int>(nameof(Account.CustomerID)),
+            Balance = x.Field<decimal>(nameof(Account.Balance)),
+            Transactions = transactionManager.GetTransactions(x.Field<int>(nameof(Account.AccountNumber)))
+
+        }).ToList();
     }
 }

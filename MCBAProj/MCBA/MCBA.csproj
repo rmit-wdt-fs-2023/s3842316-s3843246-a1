@@ -15,4 +15,10 @@
     <PackageReference Include="SimpleHashing.Net" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
 </Project>

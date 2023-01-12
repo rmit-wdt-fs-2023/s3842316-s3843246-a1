@@ -2,6 +2,8 @@
 using Microsoft.Data.SqlClient;
 using MCBA.Model;
 using MCBA.Utils;
+using System.Net;
+
 namespace MCBA.Managers;
 
 public class CustomerManager
@@ -44,5 +46,37 @@ public class CustomerManager
         cmd.Parameters.AddWithValue("postcode", customer.PostCode.GetObjOrDbNull());
 
         cmd.ExecuteNonQuery();
+    }
+
+    public Customer GetCustomer(Credential credential)
+    {
+        using var connection = new SqlConnection(_connectionStr);
+        connection.Open();
+
+        using var cmd = connection.CreateCommand();
+
+        cmd.CommandText = "SELECT * FROM dbo.[Customer] WHERE CustomerID = @customerId";
+        cmd.Parameters.AddWithValue("customerId", credential.CustomerID);
+
+        var row = cmd.GetDataTable().Select().SingleOrDefault();
+
+        return row != null ? ToCustomer(row) : null;
+    }
+
+    private Customer ToCustomer(DataRow row)
+    {
+        var accountManager = new AccountManager(_connectionStr);
+        var credentialManager = new CredentialManager(_connectionStr);
+        var customer = new Customer()
+        {
+            CustomerID = row.Field<int>(nameof(Customer.CustomerID)),
+            Name = row.Field<string>(nameof(Customer.Name)),
+            Address = row.Field<string?>(nameof(Customer.Address)),
+            City = row.Field<string?>(nameof(Customer.City)),
+            PostCode = int.Parse(row.Field<string?>(nameof(Customer.PostCode))),
+            Accounts = accountManager.GetAccounts(row.Field<int>(nameof(Customer.CustomerID))),
+            Login = credentialManager.GetCredentials(row.Field<int>(nameof(Customer.CustomerID)))
+        };
+        return customer;
     }
 }
