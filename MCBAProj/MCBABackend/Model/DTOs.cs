@@ -32,7 +32,7 @@ public class Transaction
 
 public class Credential
 {
-    public int LoginID { get; init; }
+    public int LoginID { get; set; }
     public int CustomerID { get; set; }
-    public string PasswordHash { get; init; }
+    public string PasswordHash { get; set; }
 }
