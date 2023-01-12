@@ -2,6 +2,7 @@
 using MCBA.Managers;
 using MCBA.Model;
 using MCBA.Utils;
+using MCBA.SLogic;
 namespace MCBA.Impl.Run;
 
 public class Menu
@@ -28,8 +29,29 @@ public class Menu
 			while (true)
 			{
 				PrintMenu();
-				var usrOption = Console.ReadLine();
-			}
+				var usrOption = int.Parse(Console.ReadLine());
+
+				switch (usrOption)
+				{
+					case 1:
+
+						break;
+					case 2:
+
+						break;
+					case 3:
+
+						break;
+					case 4:
+						Statement statement = new Statement(_customer);
+						statement.PrintStatement();
+						break;
+					case 5:
+						Console.Clear();
+						Console.WriteLine("Logged out successfully");
+						break;
+				}
+                }
 		}
 		else
 			MiscUtils.PrintErrMsg("Missing Data in Database");
