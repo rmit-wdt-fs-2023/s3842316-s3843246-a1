@@ -4,14 +4,14 @@ using MCBA.Utils;
 using SimpleHashing.Net;
 namespace MCBA.Logic;
 
-public class Login
+public class LoginData
 {
 	private readonly CredentialManager _credentialManager;
 	private int _loginId;
 	private string _passwordHash;
 	private Credential _credential;
 
-	public Login(CredentialManager credentialManager)
+	public LoginData(CredentialManager credentialManager)
 	{
 		_credentialManager = credentialManager;
 	}
