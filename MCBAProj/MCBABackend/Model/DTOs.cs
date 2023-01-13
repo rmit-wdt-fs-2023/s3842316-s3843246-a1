@@ -22,6 +22,7 @@ public class Account
 
 public class Transaction
 {
+    public int TransactionID { get; init; }
     public char TransactionType { get; set; }
     public int AccountNumber { get; set; }
     public int? DestinationAccountNumber { get; init; }

@@ -3,7 +3,9 @@ using MCBA.Login;
 using MCBA.Managers;
 using MCBA.Model;
 using MCBA.Menu.Options;
-using MCBA.Utils;
+using MCBA.Menu.Option;
+using static MCBA.Utils.MiscUtils;
+using static MCBA.Utils.ConstValues;
 namespace MCBA.Impl.Run;
 
 public class Menu
@@ -45,11 +47,11 @@ public class Menu
 
 				if(!int.TryParse(usrInput, out var option) || !option.IsInRange(1,6))
 				{
-					MiscUtils.PrintErrMsg("Not an Valid Input");
+					PrintErrMsg("Not an Valid Input");
 					continue;
 				}
 
-				switch (option)
+                switch (option)
 				{
 					case 1:
 						new Deposit(_accountManager,
@@ -64,6 +66,8 @@ public class Menu
                              _transactionManager, _customer).Run();
                         break;
                     case 4:
+                        new MyStatements(_accountManager,
+							_customer).Run();
                         break;
                     case 5:
 						Run();
@@ -78,7 +82,7 @@ public class Menu
             Console.WriteLine("Good bye!");
         }
         else
-			MiscUtils.PrintErrMsg("Missing Data in Database");
+			PrintErrMsg("Missing Data in Database");
 	}
 
 	private void PrintMenu()

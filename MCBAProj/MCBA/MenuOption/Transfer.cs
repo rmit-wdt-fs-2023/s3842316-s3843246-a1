@@ -1,9 +1,9 @@
 ﻿using MCBA.Model;
 using MCBA.Managers;
-using MCBA.Utils;
 using MCBA.Menu.Option;
+using static MCBA.Utils.MiscUtils;
 using static MCBA.Utils.ConstValues;
-
+using static MCBA.Utils.TransactionMath;
 namespace MCBA.Menu.Options;
 
 public class Transfer : AbstractTransactions
@@ -31,9 +31,9 @@ public class Transfer : AbstractTransactions
         int? destAccountNumber = ValidateDestinationAccount(account);
         if (destAccountNumber != null)
         {
-            decimal availableBalance = TransactionMath.ComputeAvailableBalance(account);
+            decimal availableBalance = ComputeAvailableBalance(account);
             if (GetNoOfTransactions(account.AccountNumber) >= 2 && availableBalance != 0)
-                availableBalance -= ConstValues.TransferFee;
+                availableBalance -= TransferFee;
 
             Console.Write(
                 $"{account.AccountType.GetAccStrFromChar()} {account.AccountNumber}, " +
@@ -44,10 +44,10 @@ public class Transfer : AbstractTransactions
             if (amount != null)
             {
                 string comment = GetCommentInput();
-                if (comment != null && comment.Length > ConstValues.MaxCommentLenght)
-                    MiscUtils.PrintErrMsg("Comment exceeded maximun length");
+                if (comment != null && comment.Length > MaxCommentLenght)
+                    PrintErrMsg("Comment exceeded maximun length");
 
-                if (comment == null || comment.Length <= ConstValues.MaxCommentLenght)
+                if (comment == null || comment.Length <= MaxCommentLenght)
                 {
                     if (_destAccount != null)
                     {
@@ -61,17 +61,18 @@ public class Transfer : AbstractTransactions
     }
 
     private void WithdrawBackendCalls(Account account, decimal amount,
-        string comment) {
+        string comment)
+    {
 
         // Backend Calls
         var transaction = new Transaction()
         {
-            TransactionType = ((char)ConstValues.TransactionType.Transfer),
+            TransactionType = ((char)TransactionType.Transfer),
             AccountNumber = account.AccountNumber,
             DestinationAccountNumber = _destAccount.AccountNumber,
             Amount = amount,
             Comment = comment,
-            TransactionTimeUtc = DateTime.Today
+            TransactionTimeUtc = DateTime.Now
         };
 
         decimal accountNewBalance = account.Balance.ComputeWithdrawBalance(amount);
@@ -83,21 +84,21 @@ public class Transfer : AbstractTransactions
         {
             var serviceCharge = new Transaction()
             {
-                TransactionType = ((char)ConstValues.TransactionType.ServiceCharge),
+                TransactionType = ((char)TransactionType.ServiceCharge),
                 AccountNumber = account.AccountNumber,
                 DestinationAccountNumber = null,
-                Amount = ConstValues.TransferFee,
+                Amount = TransferFee,
                 Comment = null,
-                TransactionTimeUtc = DateTime.Today
+                TransactionTimeUtc = DateTime.Now
             };
 
-            accountNewBalance = accountNewBalance.ComputeWithdrawBalance(ConstValues.TransferFee);
+            accountNewBalance = accountNewBalance.ComputeWithdrawBalance(TransferFee);
             _transactionManager.InsertTransaction(serviceCharge);
             _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
         }
 
         if (GetNoOfTransactions(account.AccountNumber) >= 2 && accountNewBalance != 0)
-            accountNewBalance -= ConstValues.TransferFee;
+            accountNewBalance -= TransferFee;
         Console.WriteLine($"Transfer of {amount:C} successful, account balance now {accountNewBalance:C}");
     }
 
@@ -106,12 +107,12 @@ public class Transfer : AbstractTransactions
 
         var transaction = new Transaction()
         {
-            TransactionType = ((char)ConstValues.TransactionType.Transfer),
+            TransactionType = ((char)TransactionType.Transfer),
             AccountNumber = _destAccount.AccountNumber,
             DestinationAccountNumber = null,
             Amount = amount,
             Comment = comment,
-            TransactionTimeUtc = DateTime.Today
+            TransactionTimeUtc = DateTime.Now
         };
 
         decimal accountNewBalance = _destAccount.Balance.ComputeDepositBalance(amount);
@@ -126,12 +127,12 @@ public class Transfer : AbstractTransactions
 
         if (!int.TryParse(usrInput, out var destAccountNumber))
         {
-            MiscUtils.PrintErrMsg("Not an Valid Input");
+            PrintErrMsg("Not an Valid Input");
             return null;
         }
         else if (destAccountNumber == account.AccountNumber)
         {
-            MiscUtils.PrintErrMsg("Destination account cannot be the same account");
+            PrintErrMsg("Destination account cannot be the same account");
             return null;
         }
 
@@ -144,7 +145,7 @@ public class Transfer : AbstractTransactions
             }
         }
 
-        MiscUtils.PrintErrMsg("Destination account Not found");
+        PrintErrMsg("Destination account Not found");
         return null;
 
     }
@@ -156,42 +157,42 @@ public class Transfer : AbstractTransactions
         // Input validation
         if (!decimal.TryParse(usrInput, out decimal amount))
         {
-            MiscUtils.PrintErrMsg("Invalid Input");
+            PrintErrMsg("Invalid Input");
             return null;
         }
         else if (amount == 0)
         {
-            MiscUtils.PrintErrMsg("Amount cannot be zero");
+            PrintErrMsg("Amount cannot be zero");
             return null;
         }
         else if (amount < 0)
         {
-            MiscUtils.PrintErrMsg("Amount cannot be negative");
+            PrintErrMsg("Amount cannot be negative");
             return null;
         }
-        else if (account.AccountType == ((char)ConstValues.AccountType.Checking))
+        else if (account.AccountType == ((char)AccountType.Checking))
         {
             if (GetNoOfTransactions(account.AccountNumber) >= 2)
             {
-                if ((amount + ConstValues.TransferFee) > TransactionMath.ComputeAvailableBalance(account))
+                if ((amount + TransferFee) > ComputeAvailableBalance(account))
                 {
-                    MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                    PrintErrMsg("Ammount cannot be greater than available balance");
                     return null;
                 }
             }
-            else if (amount > TransactionMath.ComputeAvailableBalance(account))
+            else if (amount > ComputeAvailableBalance(account))
             {
-                MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                PrintErrMsg("Ammount cannot be greater than available balance");
                 return null;
             }
         }
-        else if ((account.AccountType == ((char)ConstValues.AccountType.Saving)))
+        else if ((account.AccountType == ((char)AccountType.Saving)))
         {
             if (GetNoOfTransactions(account.AccountNumber) >= 2)
             {
-                if ((amount + ConstValues.TransferFee) > TransactionMath.ComputeAvailableBalance(account))
+                if ((amount + TransferFee) > ComputeAvailableBalance(account))
                 {
-                    MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                    PrintErrMsg("Ammount cannot be greater than available balance");
                     return null;
                 }
             }
@@ -200,9 +201,7 @@ public class Transfer : AbstractTransactions
         return amount;
     }
 
-
-
-    private void PrintMenu()
+    protected override void PrintMenu()
     {
         Console.WriteLine("--- Transfer ---");
         for (var i = 0; i < _customer.Accounts.Capacity; i++)

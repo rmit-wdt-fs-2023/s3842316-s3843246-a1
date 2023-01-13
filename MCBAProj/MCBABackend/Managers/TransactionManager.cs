@@ -51,6 +51,7 @@ public class TransactionManager
 
         return cmd.GetDataTable().Select().Select(x => new Transaction
         {
+            TransactionID = x.Field<int>(nameof(Transaction.TransactionID)),
             TransactionType = char.Parse(x.Field<string>(nameof(Transaction.TransactionType))),
             AccountNumber = x.Field<int>(nameof(Transaction.AccountNumber)),
             DestinationAccountNumber = x.Field<int?>(nameof(Transaction.DestinationAccountNumber)),

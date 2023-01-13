@@ -1,8 +1,9 @@
 ﻿using MCBA.Model;
 using MCBA.Managers;
-using MCBA.Utils;
 using MCBA.Menu.Option;
+using static MCBA.Utils.MiscUtils;
 using static MCBA.Utils.ConstValues;
+using static MCBA.Utils.TransactionMath;
 
 namespace MCBA.Menu.Options;
 
@@ -26,9 +27,9 @@ public class Withdraw : AbstractTransactions
 
     private void WithdrawMoney(Account account)
     {
-        decimal availableBalance = TransactionMath.ComputeAvailableBalance(account);
+        decimal availableBalance = ComputeAvailableBalance(account);
         if (GetNoOfTransactions(account.AccountNumber) >= 2 && availableBalance != 0)
-            availableBalance -= ConstValues.WithdrawFee;
+            availableBalance -= WithdrawFee;
 
         Console.Write(
             $"{account.AccountType.GetAccStrFromChar()} {account.AccountNumber}, " +
@@ -40,10 +41,10 @@ public class Withdraw : AbstractTransactions
         if (amount != null)
         {
             string comment = GetCommentInput();
-            if (comment != null && comment.Length > ConstValues.MaxCommentLenght)
-                MiscUtils.PrintErrMsg("Comment exceeded maximun length");
+            if (comment != null && comment.Length > MaxCommentLenght)
+                PrintErrMsg("Comment exceeded maximun length");
 
-            if (comment == null || comment.Length <= ConstValues.MaxCommentLenght)
+            if (comment == null || comment.Length <= MaxCommentLenght)
                 WithdrawBackendCalls(account, (decimal)amount, comment);
         }
     }
@@ -53,12 +54,12 @@ public class Withdraw : AbstractTransactions
     {
         var transaction = new Transaction()
         {
-            TransactionType = ((char)ConstValues.TransactionType.Withdraw),
+            TransactionType = ((char)TransactionType.Withdraw),
             AccountNumber = account.AccountNumber,
             DestinationAccountNumber = null,
             Amount = amount,
             Comment = comment,
-            TransactionTimeUtc = DateTime.Today
+            TransactionTimeUtc = DateTime.Now
         };
 
         decimal accountNewBalance = account.Balance.ComputeWithdrawBalance(amount);
@@ -70,20 +71,20 @@ public class Withdraw : AbstractTransactions
         {
             var serviceCharge = new Transaction()
             {
-                TransactionType = ((char)ConstValues.TransactionType.ServiceCharge),
+                TransactionType = ((char)TransactionType.ServiceCharge),
                 AccountNumber = account.AccountNumber,
                 DestinationAccountNumber = null,
-                Amount = ConstValues.WithdrawFee,
+                Amount = WithdrawFee,
                 Comment = null,
-                TransactionTimeUtc = DateTime.Today
+                TransactionTimeUtc = DateTime.Now
             };
 
-            accountNewBalance = accountNewBalance.ComputeWithdrawBalance(ConstValues.WithdrawFee);
+            accountNewBalance = accountNewBalance.ComputeWithdrawBalance(WithdrawFee);
             _transactionManager.InsertTransaction(serviceCharge);
             _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
         }
         if (GetNoOfTransactions(account.AccountNumber) >= 2 && accountNewBalance != 0)
-            accountNewBalance -= ConstValues.WithdrawFee;
+            accountNewBalance -= WithdrawFee;
         Console.WriteLine($"Withdraw of {amount:C} successful, account balance now {accountNewBalance:C}");
     }
 
@@ -94,42 +95,42 @@ public class Withdraw : AbstractTransactions
         // Input validation
         if (!decimal.TryParse(usrInput, out decimal amount))
         {
-            MiscUtils.PrintErrMsg("Invalid Input");
+            PrintErrMsg("Invalid Input");
             return null;
         }
         else if (amount == 0)
         {
-            MiscUtils.PrintErrMsg("Amount cannot be zero");
+            PrintErrMsg("Amount cannot be zero");
             return null;
         }
         else if (amount < 0)
         {
-            MiscUtils.PrintErrMsg("Amount cannot be negative");
+            PrintErrMsg("Amount cannot be negative");
             return null;
         }
-        else if (account.AccountType == ((char)ConstValues.AccountType.Checking))
+        else if (account.AccountType == ((char)AccountType.Checking))
         {
             if (GetNoOfTransactions(account.AccountNumber) >= 2)
             {
-                if ((amount + ConstValues.WithdrawFee) > TransactionMath.ComputeAvailableBalance(account))
+                if ((amount + WithdrawFee) > ComputeAvailableBalance(account))
                 {
-                    MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                    PrintErrMsg("Ammount cannot be greater than available balance");
                     return null;
                 }
             }
-            else if (amount > TransactionMath.ComputeAvailableBalance(account))
+            else if (amount > ComputeAvailableBalance(account))
             {
-                MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                PrintErrMsg("Ammount cannot be greater than available balance");
                 return null;
             }
         }
-        else if ((account.AccountType == ((char)ConstValues.AccountType.Saving)))
+        else if ((account.AccountType == ((char)AccountType.Saving)))
         {
             if (GetNoOfTransactions(account.AccountNumber) >= 2)
             {
-                if ((amount + ConstValues.WithdrawFee) > TransactionMath.ComputeAvailableBalance(account))
+                if ((amount + WithdrawFee) > ComputeAvailableBalance(account))
                 {
-                    MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                    PrintErrMsg("Ammount cannot be greater than available balance");
                     return null;
                 }
             }
@@ -138,9 +139,7 @@ public class Withdraw : AbstractTransactions
         return amount;
     }
 
-
-
-    private void PrintMenu()
+    protected override void PrintMenu()
     {
         Console.WriteLine("--- Withdraw ---");
         for (var i = 0; i < _customer.Accounts.Capacity; i++)
