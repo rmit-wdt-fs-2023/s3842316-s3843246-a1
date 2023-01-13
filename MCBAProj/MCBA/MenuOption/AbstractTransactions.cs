@@ -1,6 +1,6 @@
 ﻿using MCBA.Managers;
 using MCBA.Model;
-using MCBA.Utils;
+using static MCBA.Utils.ConstValues;
 namespace MCBA.Menu.Option;
 
 public abstract class AbstractTransactions
@@ -20,6 +20,7 @@ public abstract class AbstractTransactions
     }
 
     public abstract void Run();
+    protected abstract void PrintMenu();
 
     protected string GetCommentInput()
     {
@@ -48,7 +49,7 @@ public abstract class AbstractTransactions
     protected bool ServiceFeeRequired(int accountNo)
     {
         int noOfTransactions = GetNoOfTransactions(accountNo);
-        return noOfTransactions > ConstValues.MaxFreeTransactionsAllowed ? true : false;
+        return noOfTransactions > MaxFreeTransactionsAllowed ? true : false;
     }
 
     protected int GetNoOfTransactions(int accountNo)
@@ -58,8 +59,8 @@ public abstract class AbstractTransactions
         int noOfTransactions = 0;
         foreach (var transaction in transactions)
         {
-            if (transaction.TransactionType == ((char)ConstValues.TransactionType.Withdraw)
-                || transaction.TransactionType == ((char)ConstValues.TransactionType.Transfer))
+            if (transaction.TransactionType == ((char)TransactionType.Withdraw)
+                || transaction.TransactionType == ((char)TransactionType.Transfer))
                 noOfTransactions++;
         }
         return noOfTransactions;

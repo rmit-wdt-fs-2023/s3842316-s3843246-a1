@@ -25,5 +25,7 @@ internal static class ConstValues
 	public const decimal WithdrawFee = 0.05M;
 
 	public const decimal TransferFee = 0.10M;
+
+	public const int MaxTransactionPerStatmentPage = 4;
 }
 

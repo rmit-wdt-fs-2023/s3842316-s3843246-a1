@@ -1,7 +1,9 @@
 ﻿using MCBA.Model;
 using MCBA.Managers;
-using MCBA.Utils;
 using MCBA.Menu.Option;
+using static MCBA.Utils.MiscUtils;
+using static MCBA.Utils.ConstValues;
+using static MCBA.Utils.TransactionMath;
 namespace MCBA.Menu.Options;
 
 public class Deposit : AbstractTransactions
@@ -26,7 +28,7 @@ public class Deposit : AbstractTransactions
     {
         Console.Write(
             $"{account.AccountType.GetAccStrFromChar()} {account.AccountNumber}, " +
-            $"Balance: {account.Balance:C}, Available Balance: {TransactionMath.ComputeAvailableBalance(account):C}" +
+            $"Balance: {account.Balance:C}, Available Balance: {ComputeAvailableBalance(account):C}" +
             $"\nEnter amount: ");
 
         decimal? amount = AmountValidation();
@@ -34,10 +36,10 @@ public class Deposit : AbstractTransactions
         {
             string comment = GetCommentInput();
             if (comment != null)
-                if (comment.Length > ConstValues.MaxCommentLenght)
-                    MiscUtils.PrintErrMsg("Comment exceeded maximun length");
+                if (comment.Length > MaxCommentLenght)
+                    PrintErrMsg("Comment exceeded maximun length");
 
-            if (comment == null || comment.Length <= ConstValues.MaxCommentLenght)
+            if (comment == null || comment.Length <= MaxCommentLenght)
                 DepositBackendCalls(account, (decimal)amount, comment);
         }
     }
@@ -48,12 +50,12 @@ public class Deposit : AbstractTransactions
         // Backend Calls
         var transaction = new Transaction()
         {
-            TransactionType = ((char)ConstValues.TransactionType.Deposit),
+            TransactionType = ((char)TransactionType.Deposit),
             AccountNumber = account.AccountNumber,
             DestinationAccountNumber = null,
             Amount = amount,
             Comment = comment,
-            TransactionTimeUtc = DateTime.Today
+            TransactionTimeUtc = DateTime.Now
         };
 
         decimal accountNewBalance = account.Balance.ComputeDepositBalance(amount);
@@ -70,17 +72,17 @@ public class Deposit : AbstractTransactions
         // Input validation
         if (!decimal.TryParse(usrInput, out decimal amount))
         {
-            MiscUtils.PrintErrMsg("Invalid Input");
+            PrintErrMsg("Invalid Input");
             return null;
         }
         else if (amount == 0)
         {
-            MiscUtils.PrintErrMsg("Amount cannot be zero");
+            PrintErrMsg("Amount cannot be zero");
             return null;
         }
         else if (amount < 0)
         {
-            MiscUtils.PrintErrMsg("Amount cannot be negative");
+            PrintErrMsg("Amount cannot be negative");
             return null;
         }
 
@@ -91,14 +93,14 @@ public class Deposit : AbstractTransactions
 
             if (decimalPlacesLength > 2)
             {
-                MiscUtils.PrintErrMsg("Amount cannot have more than 2 decimal places");
+                PrintErrMsg("Amount cannot have more than 2 decimal places");
                 return null;
             }
         }
         return amount;
     }
 
-    private void PrintMenu()
+    protected override void PrintMenu()
     {
         Console.WriteLine("--- Deposit ---");
         for (var i = 0; i < _customer.Accounts.Capacity; i++)
