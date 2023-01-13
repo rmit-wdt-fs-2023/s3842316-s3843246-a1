@@ -47,6 +47,12 @@ public abstract class AbstractTransactions
 
     protected bool ServiceFeeRequired(int accountNo)
     {
+        int noOfTransactions = GetNoOfTransactions(accountNo);
+        return noOfTransactions > ConstValues.MaxFreeTransactionsAllowed ? true : false;
+    }
+
+    protected int GetNoOfTransactions(int accountNo)
+    {
         List<Transaction> transactions = _transactionManager.GetTransactions(accountNo);
 
         int noOfTransactions = 0;
@@ -56,6 +62,6 @@ public abstract class AbstractTransactions
                 || transaction.TransactionType == ((char)ConstValues.TransactionType.Transfer))
                 noOfTransactions++;
         }
-        return noOfTransactions <= ConstValues.MaxFreeTransactionsAllowed ? false : true;
+        return noOfTransactions;
     }
 }

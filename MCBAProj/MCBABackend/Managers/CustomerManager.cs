@@ -21,7 +21,7 @@ public class CustomerManager
         connection.Open();
 
         using var cmd = connection.CreateCommand();
-        cmd.CommandText = "select count(*) from dbo.Customer";
+        cmd.CommandText = "SELECT count(*) FROM dbo.[Customer]";
 
         var count = (int)cmd.ExecuteScalar();
 

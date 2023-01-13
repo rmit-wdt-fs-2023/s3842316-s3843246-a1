@@ -38,26 +38,29 @@ public class Deposit : AbstractTransactions
                     MiscUtils.PrintErrMsg("Comment exceeded maximun length");
 
             if (comment == null || comment.Length <= ConstValues.MaxCommentLenght)
-            {
-                // Backend Calls
-                decimal amountVal = (decimal)amount;
-                var transaction = new Transaction()
-                {
-                    TransactionType = ((char)ConstValues.TransactionType.Deposit),
-                    AccountNumber = account.AccountNumber,
-                    DestinationAccountNumber = null,
-                    Amount = amountVal,
-                    Comment = comment,
-                    TransactionTimeUtc = DateTime.Today
-                };
-
-                decimal accountNewBalance = account.Balance.ComputeDepositBalance(amountVal);
-                _transactionManager.InsertTransaction(transaction);
-                _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
-
-                Console.WriteLine($"Deposit of {amount:C} successful, account balance now {accountNewBalance:C}");
-            }
+                DepositBackendCalls(account, (decimal)amount, comment);
         }
+    }
+
+    private void DepositBackendCalls(Account account, decimal amount,
+        string comment)
+    {
+        // Backend Calls
+        var transaction = new Transaction()
+        {
+            TransactionType = ((char)ConstValues.TransactionType.Deposit),
+            AccountNumber = account.AccountNumber,
+            DestinationAccountNumber = null,
+            Amount = amount,
+            Comment = comment,
+            TransactionTimeUtc = DateTime.Today
+        };
+
+        decimal accountNewBalance = account.Balance.ComputeDepositBalance(amount);
+        _transactionManager.InsertTransaction(transaction);
+        _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
+
+        Console.WriteLine($"Deposit of {amount:C} successful, account balance now {accountNewBalance:C}");
     }
 
     private decimal? AmountValidation()

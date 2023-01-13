@@ -26,9 +26,13 @@ public class Withdraw : AbstractTransactions
 
     private void WithdrawMoney(Account account)
     {
+        decimal availableBalance = TransactionMath.ComputeAvailableBalance(account);
+        if (GetNoOfTransactions(account.AccountNumber) >= 2 && availableBalance != 0)
+            availableBalance -= ConstValues.WithdrawFee;
+
         Console.Write(
             $"{account.AccountType.GetAccStrFromChar()} {account.AccountNumber}, " +
-            $"Balance: {account.Balance:C}, Available Balance: {TransactionMath.ComputeAvailableBalance(account):C}" +
+            $"Balance: {account.Balance:C}, Available Balance: {availableBalance:C}" +
             $"\nEnter amount: ");
 
         decimal? amount = AmountValidation(account);
@@ -37,48 +41,50 @@ public class Withdraw : AbstractTransactions
         {
             string comment = GetCommentInput();
             if (comment != null && comment.Length > ConstValues.MaxCommentLenght)
-                    MiscUtils.PrintErrMsg("Comment exceeded maximun length");
+                MiscUtils.PrintErrMsg("Comment exceeded maximun length");
 
-            if(comment == null || comment.Length <= ConstValues.MaxCommentLenght)
-            {
-                // Backend Calls
-                decimal amountVal = (decimal)amount;
-
-                var transaction = new Transaction()
-                {
-                    TransactionType = ((char)ConstValues.TransactionType.Withdraw),
-                    AccountNumber = account.AccountNumber,
-                    DestinationAccountNumber = null,
-                    Amount = amountVal,
-                    Comment = comment,
-                    TransactionTimeUtc = DateTime.Today
-                };
-
-                decimal accountNewBalance = account.Balance.ComputeWithdrawBalance(amountVal);
-                _transactionManager.InsertTransaction(transaction);
-                _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
-
-
-                if (ServiceFeeRequired(account.AccountNumber))
-                {
-                    var serviceCharge = new Transaction()
-                    {
-                        TransactionType = ((char)ConstValues.TransactionType.ServiceCharge),
-                        AccountNumber = account.AccountNumber,
-                        DestinationAccountNumber = null,
-                        Amount = ConstValues.WithdrawFee,
-                        Comment = null,
-                        TransactionTimeUtc = DateTime.Today
-                    };
-
-                    accountNewBalance = accountNewBalance.ComputeWithdrawBalance(ConstValues.WithdrawFee);
-                    _transactionManager.InsertTransaction(serviceCharge);
-                    _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
-                }
-
-                Console.WriteLine($"Withdraw of {amount:C} successful, account balance now {accountNewBalance:C}");
-            }
+            if (comment == null || comment.Length <= ConstValues.MaxCommentLenght)
+                WithdrawBackendCalls(account, (decimal)amount, comment);
         }
+    }
+
+    private void WithdrawBackendCalls(Account account, decimal amount,
+        string comment)
+    {
+        var transaction = new Transaction()
+        {
+            TransactionType = ((char)ConstValues.TransactionType.Withdraw),
+            AccountNumber = account.AccountNumber,
+            DestinationAccountNumber = null,
+            Amount = amount,
+            Comment = comment,
+            TransactionTimeUtc = DateTime.Today
+        };
+
+        decimal accountNewBalance = account.Balance.ComputeWithdrawBalance(amount);
+        _transactionManager.InsertTransaction(transaction);
+        _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
+
+
+        if (ServiceFeeRequired(account.AccountNumber))
+        {
+            var serviceCharge = new Transaction()
+            {
+                TransactionType = ((char)ConstValues.TransactionType.ServiceCharge),
+                AccountNumber = account.AccountNumber,
+                DestinationAccountNumber = null,
+                Amount = ConstValues.WithdrawFee,
+                Comment = null,
+                TransactionTimeUtc = DateTime.Today
+            };
+
+            accountNewBalance = accountNewBalance.ComputeWithdrawBalance(ConstValues.WithdrawFee);
+            _transactionManager.InsertTransaction(serviceCharge);
+            _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
+        }
+        if (GetNoOfTransactions(account.AccountNumber) >= 2 && accountNewBalance != 0)
+            accountNewBalance -= ConstValues.WithdrawFee;
+        Console.WriteLine($"Withdraw of {amount:C} successful, account balance now {accountNewBalance:C}");
     }
 
     private decimal? AmountValidation(Account account)
@@ -102,11 +108,32 @@ public class Withdraw : AbstractTransactions
             return null;
         }
         else if (account.AccountType == ((char)ConstValues.AccountType.Checking))
-            if (amount > TransactionMath.ComputeAvailableBalance(account))
+        {
+            if (GetNoOfTransactions(account.AccountNumber) >= 2)
+            {
+                if ((amount + ConstValues.WithdrawFee) > TransactionMath.ComputeAvailableBalance(account))
+                {
+                    MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                    return null;
+                }
+            }
+            else if (amount > TransactionMath.ComputeAvailableBalance(account))
             {
                 MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
                 return null;
             }
+        }
+        else if ((account.AccountType == ((char)ConstValues.AccountType.Saving)))
+        {
+            if (GetNoOfTransactions(account.AccountNumber) >= 2)
+            {
+                if ((amount + ConstValues.WithdrawFee) > TransactionMath.ComputeAvailableBalance(account))
+                {
+                    MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
+                    return null;
+                }
+            }
+        }
 
         return amount;
     }

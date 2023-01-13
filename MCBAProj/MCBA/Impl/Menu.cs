@@ -60,6 +60,8 @@ public class Menu
                              _transactionManager, _customer).Run();
                         break;
                     case 3:
+						new Transfer(_accountManager,
+                             _transactionManager, _customer).Run();
                         break;
                     case 4:
                         break;

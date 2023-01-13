@@ -1,4 +1,5 @@
 ﻿using MCBA.Model;
+using Microsoft.Identity.Client;
 
 namespace MCBA.Utils;
 internal static class TransactionMath
@@ -14,6 +15,5 @@ internal static class TransactionMath
 
     internal static decimal ComputeWithdrawBalance(this decimal accountBalance, decimal amount) => (accountBalance - amount);
     internal static decimal ComputeDepositBalance(this decimal accountBalance, decimal amount) => (accountBalance + amount);
-
 }
 
