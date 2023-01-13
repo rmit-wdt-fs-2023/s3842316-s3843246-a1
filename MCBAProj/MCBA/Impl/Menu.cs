@@ -56,7 +56,9 @@ public class Menu
 							 _transactionManager, _customer).Run();
 						break;
 					case 2:
-						break;
+                        new Withdraw(_accountManager,
+                             _transactionManager, _customer).Run();
+                        break;
                     case 3:
                         break;
                     case 4:

@@ -2,11 +2,13 @@
 using MCBA.Managers;
 using MCBA.Utils;
 using MCBA.Menu.Option;
+using static MCBA.Utils.ConstValues;
+
 namespace MCBA.Menu.Options;
 
-public class Deposit : AbstractTransactions
+public class Withdraw : AbstractTransactions
 {
-    public Deposit(AccountManager accountManager,
+    public Withdraw(AccountManager accountManager,
         TransactionManager transactionManager, Customer customer) :
         base(accountManager, transactionManager, customer)
     { }
@@ -18,32 +20,33 @@ public class Deposit : AbstractTransactions
         var usrInput = Console.ReadLine();
         if (int.TryParse(usrInput, out var option) && option.IsInRange(1, _accounts.Capacity))
         {
-            DepositMoney(_accounts[--option]);
+            WithdrawMoney(_accounts[--option]);
         }
     }
 
-    private void DepositMoney(Account account)
+    private void WithdrawMoney(Account account)
     {
         Console.Write(
             $"{account.AccountType.GetAccStrFromChar()} {account.AccountNumber}, " +
             $"Balance: {account.Balance:C}, Available Balance: {TransactionMath.ComputeAvailableBalance(account):C}" +
             $"\nEnter amount: ");
 
-        decimal? amount = AmountValidation();
+        decimal? amount = AmountValidation(account);
+
         if (amount != null)
         {
             string comment = GetCommentInput();
-            if (comment != null)
-                if (comment.Length > ConstValues.MaxCommentLenght)
+            if (comment != null && comment.Length > ConstValues.MaxCommentLenght)
                     MiscUtils.PrintErrMsg("Comment exceeded maximun length");
 
-            if (comment == null || comment.Length <= ConstValues.MaxCommentLenght)
+            if(comment == null || comment.Length <= ConstValues.MaxCommentLenght)
             {
                 // Backend Calls
                 decimal amountVal = (decimal)amount;
+
                 var transaction = new Transaction()
                 {
-                    TransactionType = ((char)ConstValues.TransactionType.Deposit),
+                    TransactionType = ((char)ConstValues.TransactionType.Withdraw),
                     AccountNumber = account.AccountNumber,
                     DestinationAccountNumber = null,
                     Amount = amountVal,
@@ -51,16 +54,34 @@ public class Deposit : AbstractTransactions
                     TransactionTimeUtc = DateTime.Today
                 };
 
-                decimal accountNewBalance = account.Balance.ComputeDepositBalance(amountVal);
+                decimal accountNewBalance = account.Balance.ComputeWithdrawBalance(amountVal);
                 _transactionManager.InsertTransaction(transaction);
                 _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
 
-                Console.WriteLine($"Deposit of {amount:C} successful, account balance now {accountNewBalance:C}");
+
+                if (ServiceFeeRequired(account.AccountNumber))
+                {
+                    var serviceCharge = new Transaction()
+                    {
+                        TransactionType = ((char)ConstValues.TransactionType.ServiceCharge),
+                        AccountNumber = account.AccountNumber,
+                        DestinationAccountNumber = null,
+                        Amount = ConstValues.WithdrawFee,
+                        Comment = null,
+                        TransactionTimeUtc = DateTime.Today
+                    };
+
+                    accountNewBalance = accountNewBalance.ComputeWithdrawBalance(ConstValues.WithdrawFee);
+                    _transactionManager.InsertTransaction(serviceCharge);
+                    _accountManager.UpdateBalance(account.AccountNumber, accountNewBalance);
+                }
+
+                Console.WriteLine($"Withdraw of {amount:C} successful, account balance now {accountNewBalance:C}");
             }
         }
     }
 
-    private decimal? AmountValidation()
+    private decimal? AmountValidation(Account account)
     {
         var usrInput = Console.ReadLine();
 
@@ -80,24 +101,21 @@ public class Deposit : AbstractTransactions
             MiscUtils.PrintErrMsg("Amount cannot be negative");
             return null;
         }
-
-        if (amount % 1 != 0)
-        {
-            string decimalString = amount.ToString();
-            int decimalPlacesLength = (decimalString.Substring(decimalString.IndexOf(".")).Length) - 1;
-
-            if (decimalPlacesLength > 2)
+        else if (account.AccountType == ((char)ConstValues.AccountType.Checking))
+            if (amount > TransactionMath.ComputeAvailableBalance(account))
             {
-                MiscUtils.PrintErrMsg("Amount cannot have more than 2 decimal places");
+                MiscUtils.PrintErrMsg("Ammount cannot be greater than available balance");
                 return null;
             }
-        }
+
         return amount;
     }
 
+
+
     private void PrintMenu()
     {
-        Console.WriteLine("--- Deposit ---");
+        Console.WriteLine("--- Withdraw ---");
         for (var i = 0; i < _customer.Accounts.Capacity; i++)
         {
             Console.WriteLine($"{i + 1}. {_accounts[i].AccountType.GetAccStrFromChar()}\t" +
@@ -105,5 +123,5 @@ public class Deposit : AbstractTransactions
         }
         Console.Write("\nSelect an account: ");
     }
-}
 
+}
