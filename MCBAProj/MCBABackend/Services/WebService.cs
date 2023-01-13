@@ -49,8 +49,6 @@ public static class WebService
                 credentialManager.InsertCredential(customer.Login);
 			}
 		}
-		// Debug - Delete later
-		Console.WriteLine("Populated DB - DEBUG");
 	}
 
 	// Calculates Balance through transactions

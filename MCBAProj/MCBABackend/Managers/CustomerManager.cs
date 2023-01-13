@@ -21,7 +21,7 @@ public class CustomerManager
         connection.Open();
 
         using var cmd = connection.CreateCommand();
-        cmd.CommandText = "select count(*) from dbo.Customer";
+        cmd.CommandText = "SELECT count(*) FROM dbo.[Customer]";
 
         var count = (int)cmd.ExecuteScalar();
 
@@ -73,7 +73,10 @@ public class CustomerManager
             Name = row.Field<string>(nameof(Customer.Name)),
             Address = row.Field<string?>(nameof(Customer.Address)),
             City = row.Field<string?>(nameof(Customer.City)),
-            PostCode = int.Parse(row.Field<string?>(nameof(Customer.PostCode))),
+
+            PostCode = row.Field<string?>(nameof(Customer.PostCode))
+            != null ? int.Parse(row.Field<string?>(nameof(Customer.PostCode))) : null,
+
             Accounts = accountManager.GetAccounts(row.Field<int>(nameof(Customer.CustomerID))),
             Login = credentialManager.GetCredentials(row.Field<int>(nameof(Customer.CustomerID)))
         };

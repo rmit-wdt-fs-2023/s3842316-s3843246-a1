@@ -26,7 +26,7 @@ public class Program
                 transactionManager, credentialManager);
 
             // Runs the main system
-            new Menu(credentialManager, customerManager).Run();
+            new Menu(credentialManager, customerManager, accountManager, transactionManager).Run();
         }
         else
         {

@@ -1,6 +1,8 @@
-﻿using MCBA.Login;
+﻿using System.Diagnostics;
+using MCBA.Login;
 using MCBA.Managers;
 using MCBA.Model;
+using MCBA.Menu.Options;
 using MCBA.Utils;
 namespace MCBA.Impl.Run;
 
@@ -8,12 +10,18 @@ public class Menu
 {
     private readonly CredentialManager _credentialManager;
     private readonly CustomerManager _customerManager;
+	private readonly AccountManager _accountManager;
+	private readonly TransactionManager _transactionManager;
 	private Customer _customer;
 	 
-	public Menu(CredentialManager credentialManager, CustomerManager customerManager)
+	public Menu(CredentialManager credentialManager,
+		CustomerManager customerManager, AccountManager accountManager,
+		TransactionManager transactionManager)
 	{
 		_credentialManager = credentialManager;
 		_customerManager = customerManager;
+		_accountManager = accountManager;
+		_transactionManager = transactionManager;
 	}
 
 	public void Run()
@@ -22,22 +30,60 @@ public class Menu
 		login.ReadAndValidate();
 		_customer = login.GetCustomer();
 
+		Console.WriteLine("\n");
+
 		// Checks if customer is not null
 		if (_customer != null)
 		{
-			while (true)
+			var exit = false;
+			while (!exit)
 			{
+				_customer = login.GetCustomer();
+				Console.WriteLine();
 				PrintMenu();
-				var usrOption = Console.ReadLine();
+				var usrInput = Console.ReadLine();
+
+				if(!int.TryParse(usrInput, out var option) || !option.IsInRange(1,6))
+				{
+					MiscUtils.PrintErrMsg("Not an Valid Input");
+					continue;
+				}
+
+				switch (option)
+				{
+					case 1:
+						new Deposit(_accountManager,
+							 _transactionManager, _customer).Run();
+						break;
+					case 2:
+                        new Withdraw(_accountManager,
+                             _transactionManager, _customer).Run();
+                        break;
+                    case 3:
+						new Transfer(_accountManager,
+                             _transactionManager, _customer).Run();
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+						Run();
+                        break;
+                    case 6:
+						exit = true;
+                        break;
+					default:
+						throw new UnreachableException();
+                }
 			}
-		}
-		else
+            Console.WriteLine("Good bye!");
+        }
+        else
 			MiscUtils.PrintErrMsg("Missing Data in Database");
 	}
 
 	private void PrintMenu()
 	{
-		Console.WriteLine(
+		Console.Write(
 			$"""
 			--- {_customer.Name} ---
 			[1] Deposit

@@ -15,6 +15,27 @@ public class AccountManager
         _connectionStr = connectionStr;
     }
 
+    public List<Account> All()
+    {
+        using var connection = new SqlConnection(_connectionStr);
+        connection.Open();
+
+        using var cmd = connection.CreateCommand();
+        cmd.CommandText = "SELECT * from dbo.[Account]";
+
+        var transactionManager = new TransactionManager(_connectionStr);
+
+        return cmd.GetDataTable().Select().Select(x => new Account
+        {
+            AccountNumber = x.Field<int>(nameof(Account.AccountNumber)),
+            AccountType = char.Parse(x.Field<string>(nameof(Account.AccountType))),
+            CustomerID = x.Field<int>(nameof(Account.CustomerID)),
+            Balance = x.Field<decimal>(nameof(Account.Balance)),
+            Transactions = transactionManager.GetTransactions(x.Field<int>(nameof(Account.AccountNumber)))
+
+        }).ToList();
+    }
+
     public void InsertAccount(Account account)
     {
         using var connection = new SqlConnection(_connectionStr);
@@ -54,5 +75,20 @@ public class AccountManager
             Transactions = transactionManager.GetTransactions(x.Field<int>(nameof(Account.AccountNumber)))
 
         }).ToList();
+    }
+
+    public void UpdateBalance(int accountNumber, decimal balance)
+    {
+        using var connection = new SqlConnection(_connectionStr);
+        connection.Open();
+
+        using var cmd = connection.CreateCommand();
+
+        cmd.CommandText =
+            "UPDATE dbo.[Account] SET Balance = @balance WHERE AccountNumber = @accountNumber";
+        cmd.Parameters.AddWithValue("balance", balance);
+        cmd.Parameters.AddWithValue("accountNumber", accountNumber);
+
+        cmd.ExecuteNonQuery();
     }
 }

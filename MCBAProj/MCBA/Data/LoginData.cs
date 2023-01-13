@@ -93,8 +93,5 @@ public class LoginData
         return true;
     }
 
-    public Customer GetCustomer()
-    {
-        return _customerManager.GetCustomer(_credential);
-    }
+    public Customer GetCustomer() => _customerManager.GetCustomer(_credential);
 }
