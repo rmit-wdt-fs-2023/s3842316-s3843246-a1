@@ -55,4 +55,19 @@ public class AccountManager
 
         }).ToList();
     }
+
+    public void UpdateBalance(int accountNumber, decimal balance)
+    {
+        using var connection = new SqlConnection(_connectionStr);
+        connection.Open();
+
+        using var cmd = connection.CreateCommand();
+
+        cmd.CommandText =
+            "UPDATE dbo.[Account] SET Balance = @balance WHERE AccountNumber = @accountNumber";
+        cmd.Parameters.AddWithValue("balance", balance);
+        cmd.Parameters.AddWithValue("accountNumber", accountNumber);
+
+        cmd.ExecuteNonQuery();
+    }
 }
