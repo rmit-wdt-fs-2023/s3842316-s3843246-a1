@@ -8,6 +8,7 @@ public class TransactionManager : AbstractDBManager
 {
     public TransactionManager(string connection) : base(connection) { }
 
+    // Inserts new transaction in databse
     public void InsertTransaction(Transaction transaction)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -34,6 +35,7 @@ public class TransactionManager : AbstractDBManager
         cmd.ExecuteNonQuery();
     }
 
+    // Returns list of all transactions of specific accountNumber
     public List<Transaction> GetTransactions(int accountNumber)
     {
         using var connection = new SqlConnection(ConnectionStr);

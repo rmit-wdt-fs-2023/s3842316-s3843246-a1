@@ -10,6 +10,7 @@ public class AccountManager : AbstractDBManager
 {
     public AccountManager(string connection) : base(connection) { }
 
+    // Returns all available accounts
     public List<Account> All()
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -31,6 +32,7 @@ public class AccountManager : AbstractDBManager
         }).ToList();
     }
 
+    // Insert Account into database
     public void InsertAccount(Account account)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -49,6 +51,7 @@ public class AccountManager : AbstractDBManager
         cmd.ExecuteNonQuery();
     }
 
+    // Returns list of customers accounts
     public List<Account> GetAccounts(int customerId)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -72,6 +75,7 @@ public class AccountManager : AbstractDBManager
         }).ToList();
     }
 
+    // Changes the cureent balance to newer balance
     public void UpdateBalance(int accountNumber, decimal balance)
     {
         using var connection = new SqlConnection(ConnectionStr);

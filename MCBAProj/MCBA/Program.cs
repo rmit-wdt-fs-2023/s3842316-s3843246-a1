@@ -28,6 +28,5 @@ public class Program
         {
             Console.WriteLine("Fatal Err: Database could not be loaded");
         }
-
     }
 }

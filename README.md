@@ -1,13 +1,25 @@
 # s3842316-s3843246-a1
 
+## [GitHub Link(Main Branch)](https://github.com/rmit-wdt-fs-2023/s3842316-s3843246-a1) 
+
+
+	Note: This file is written in markdown please go to github page for prettier version:)
+	Group No: 3
+	Solution File Path : s3842316-s3843246-a1/MCBAProj/MCBAProj.sln
+	ID: S3842316 - Name: Sahibjeet Singh
+	ID: s3843246 - Name: Rishiktrishwa Rao
+
 ### F) Design Patterns
  1. Dependency Injection
 	 - Used - Files 'MCBA/Program.cs' -> 'MCBABackend/Managers/DBManagerFactory',  'MCBA/Impl/Menu.cs' -> 'MCBA/MenuOptions/AbstractTransactions.cs', 'MCBA/MenuOptions/MyStatements.cs' 
 	- Where - 'Program.cs'
+	- Line - '22', '25'
 		- 'Program.cs' Constructor Injector - 
 			>  var dbManagerFactory = new DBManagerFactory(connectionStr);				
 			>  WebService.FetchAndPostWebCustomers(dbManagerFactory);
 			>             new Menu(dbManagerFactory).Run();
+	- Where - 'Program.cs'
+	- Line - '20', '46', '49', '52', '55'
 		 - 'Menu.cs ' Constructor Injector - 
 			 > var login = new LoginData(_manager);
 			 > new Deposit(_manager, _customer).Run();
@@ -27,6 +39,7 @@
 2. Factory
 	 - Used - Files 'MCBABackend/Managers/DBManagerFactory', Program.cs
 	- Where - 'Program.cs'
+	- - Line - '22', '25'
 		- 'Program.cs'  - 
 			>  var dbManagerFactory = new DBManagerFactory(connectionStr);				
 		 - 'DBManagerFactory ' 
@@ -94,4 +107,9 @@
             Login = credentialManager.GetCredentials(row.Field<int>(nameof(Customer.CustomerID)))
         }; 
 	> Because CustomerID is set to required in DTO the code won't compile  
-		
+	
+### F) Async Await keyword 
+- Where - 'MCBABackend/Model/DTO.cs'
+	- Line - "53-58", "18"
+
+	> Async and Await are used in my application when retrieving data from Web Api - The only real benefit of using it here is responsiveness. Which won't matter a lot at this stage because the precede with with next execution the json string is required. It hasn't changed my code a lot. But in if application was large handling big data sets this feature could come very handy. We can commence other tasks while data is being processed.

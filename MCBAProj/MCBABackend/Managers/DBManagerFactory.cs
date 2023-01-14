@@ -1,6 +1,7 @@
 ﻿using System;
 namespace MCBA.Managers
 {
+	// DbManager Factory initillizes all Managers and can ve accesed by factory instance
 	public class DBManagerFactory
 	{
 		public CredentialManager _credentialManager { get; }
