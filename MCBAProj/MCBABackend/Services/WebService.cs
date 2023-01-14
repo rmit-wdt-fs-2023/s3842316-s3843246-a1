@@ -10,10 +10,9 @@ public static class WebService
 		"https://coreteaching01.csit.rmit.edu.au/~e103884/wdt/services/customers/";
 
 	// Retreves Customers from Web API and add's them to the database
-	public static void FetchAndPostWebCustomers(CustomerManager customerManager, AccountManager accountManager,
-		TransactionManager transactionManager, CredentialManager credentialManager)
+	public static void FetchAndPostWebCustomers(DBManagerFactory manager)
 	{
-        if (customerManager.Exists())
+        if (manager._customerManager.Exists())
 			return;
 
 		using var client = new HttpClient();
@@ -31,22 +30,22 @@ public static class WebService
 			// Inserting data in DataBase
 			foreach (var customer in customers)
 			{
-				customerManager.InsertCustomer(customer);
+                manager._customerManager.InsertCustomer(customer);
 				foreach (var account in customer.Accounts)
 				{
 					account.CustomerID = customer.CustomerID;
 					account.Balance = ComputeBalance(account);
-					accountManager.InsertAccount(account);
+                    manager._accountManager.InsertAccount(account);
 
 					foreach (var transaction in account.Transactions)
 					{
 						transaction.TransactionType = MiscUtils.Deposit;
 						transaction.AccountNumber = account.AccountNumber;
-						transactionManager.InsertTransaction(transaction);
+                        manager._transactionManager.InsertTransaction(transaction);
 					}
 				}
 				customer.Login.CustomerID = customer.CustomerID;
-                credentialManager.InsertCredential(customer.Login);
+                manager._credentialManager.InsertCredential(customer.Login);
 			}
 		}
 	}

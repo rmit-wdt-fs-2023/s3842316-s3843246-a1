@@ -14,9 +14,9 @@ public class MyStatements
     private List<Account> _accounts;
     private Account _account;
 
-    public MyStatements(AccountManager accountManager, Customer customer)
+    public MyStatements(DBManagerFactory manager, Customer customer)
     {
-        _accountManager = accountManager;
+        _accountManager = manager._accountManager;
         _customer = customer;
         _accounts = _customer.Accounts;
 

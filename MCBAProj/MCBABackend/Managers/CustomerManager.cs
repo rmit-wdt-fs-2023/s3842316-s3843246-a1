@@ -6,18 +6,13 @@ using System.Net;
 
 namespace MCBA.Managers;
 
-public class CustomerManager
+public class CustomerManager : AbstractDBManager
 {
-    private readonly string _connectionStr;
-
-    public CustomerManager(string connectionStr)
-	{
-        _connectionStr = connectionStr;
-	}
+    public CustomerManager(string connection) : base(connection) { }
 
     public bool Exists()
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
@@ -30,7 +25,7 @@ public class CustomerManager
 
     public void InsertCustomer(Customer customer)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
@@ -50,7 +45,7 @@ public class CustomerManager
 
     public Customer GetCustomer(Credential credential)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
@@ -65,8 +60,8 @@ public class CustomerManager
 
     private Customer ToCustomer(DataRow row)
     {
-        var accountManager = new AccountManager(_connectionStr);
-        var credentialManager = new CredentialManager(_connectionStr);
+        var accountManager = new AccountManager(ConnectionStr);
+        var credentialManager = new CredentialManager(ConnectionStr);
         var customer = new Customer()
         {
             CustomerID = row.Field<int>(nameof(Customer.CustomerID)),

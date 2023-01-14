@@ -9,10 +9,8 @@ namespace MCBA.Menu.Options;
 
 public class Withdraw : AbstractTransactions
 {
-    public Withdraw(AccountManager accountManager,
-        TransactionManager transactionManager, Customer customer) :
-        base(accountManager, transactionManager, customer)
-    { }
+    public Withdraw(DBManagerFactory manager, Customer customer) :
+        base(manager, customer) { }
 
     public override void Run()
     {

@@ -10,11 +10,10 @@ public abstract class AbstractTransactions
     protected Customer _customer;
     protected List<Account> _accounts;
 
-    public AbstractTransactions(AccountManager accountManager,
-        TransactionManager transactionManager, Customer customer)
+    public AbstractTransactions(DBManagerFactory manager, Customer customer)
     {
-        _accountManager = accountManager;
-        _transactionManager = transactionManager;
+        _accountManager = manager._accountManager;
+        _transactionManager = manager._transactionManager;
         _customer = customer;
         _accounts = _customer.Accounts;
     }

@@ -8,10 +8,8 @@ namespace MCBA.Menu.Options;
 
 public class Deposit : AbstractTransactions
 {
-    public Deposit(AccountManager accountManager,
-        TransactionManager transactionManager, Customer customer) :
-        base(accountManager, transactionManager, customer)
-    { }
+    public Deposit(DBManagerFactory manager, Customer customer) :
+        base(manager, customer) { }
 
     public override void Run()
     {
