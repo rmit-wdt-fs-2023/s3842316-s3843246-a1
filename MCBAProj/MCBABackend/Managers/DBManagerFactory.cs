@@ -3,7 +3,6 @@ namespace MCBA.Managers
 {
 	public class DBManagerFactory
 	{
-		private string _connectionStr;
 		public CredentialManager _credentialManager { get; }
         public CustomerManager _customerManager { get; }
         public AccountManager _accountManager { get; }
@@ -11,11 +10,10 @@ namespace MCBA.Managers
 
         public DBManagerFactory(string connection)
 		{
-			_connectionStr = connection;
-			_credentialManager = new CredentialManager(_connectionStr);
-			_customerManager = new CustomerManager(_connectionStr);
-			_accountManager = new AccountManager(_connectionStr);
-			_transactionManager = new TransactionManager(_connectionStr);
+			_credentialManager = new CredentialManager(connection);
+			_customerManager = new CustomerManager(connection);
+			_accountManager = new AccountManager(connection);
+			_transactionManager = new TransactionManager(connection);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿namespace MCBA.Managers
 {
-	public abstract class AbstractDBManager
+	internal abstract class AbstractDBManager
 	{
         protected string ConnectionStr;
 

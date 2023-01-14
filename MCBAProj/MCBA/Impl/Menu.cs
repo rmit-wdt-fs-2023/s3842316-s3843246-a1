@@ -12,11 +12,8 @@ public class Menu
 {
 	private readonly DBManagerFactory _manager;
 	private Customer? _customer;
-	 
-	public Menu(DBManagerFactory managers)
-	{
-		_manager = managers;
-	}
+
+	public Menu(DBManagerFactory managers) => _manager = managers;
 
 	public void Run()
 	{
@@ -55,8 +52,7 @@ public class Menu
 						new Transfer(_manager, _customer).Run();
                         break;
                     case 4:
-                        new MyStatements(_manager._accountManager,
-							_customer).Run();
+                        new MyStatements(_manager, _customer).Run();
                         break;
                     case 5:
 						_customer = null;
@@ -70,6 +66,7 @@ public class Menu
                         login = null;
 						exit = true;
                         Console.Clear();
+						Console.WriteLine("Program ending.");
                         continue;
 					default:
 						throw new UnreachableException();
