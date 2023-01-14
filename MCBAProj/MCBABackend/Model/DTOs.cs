@@ -2,38 +2,38 @@
 
 public class Customer
 {
-    public int CustomerID { get; init; }
-    public string Name { get; init; }
-    public string? Address { get; init; }
-    public string? City { get; init; }
-    public int? PostCode { get; init; }
-    public List<Account> Accounts { get; init; }
-    public Credential Login { get; init; }
+    public required int CustomerID { get; init; }
+    public required string Name { get; init; }
+    public required string? Address { get; init; }
+    public required string? City { get; init; }
+    public required int? PostCode { get; init; }
+    public required List<Account> Accounts { get; init; }
+    public required Credential Login { get; init; }
 }
 
 public class Account
 {
-    public int AccountNumber { get; init; }
-    public char AccountType { get; init; }
-    public int CustomerID { get; set; }
-    public decimal Balance { get; set; }
-    public List<Transaction> Transactions { get; init; }
+    public required int AccountNumber { get; init; }
+    public required char AccountType { get; init; }
+    public required int CustomerID { get; set; }
+    public required decimal Balance { get; set; }
+    public required List<Transaction> Transactions { get; init; }
 }
 
 public class Transaction
 {
     public int TransactionID { get; init; }
-    public char TransactionType { get; set; }
-    public int AccountNumber { get; set; }
-    public int? DestinationAccountNumber { get; init; }
-    public decimal Amount { get; init; }
+    public required char TransactionType { get; set; }
+    public required int AccountNumber { get; set; }
+    public required int? DestinationAccountNumber { get; init; }
+    public required decimal Amount { get; init; }
     public string? Comment { get; init; }
-    public DateTime TransactionTimeUtc { get; init; }
+    public required DateTime TransactionTimeUtc { get; init; }
 }
 
 public class Credential
 {
-    public int LoginID { get; set; }
-    public int CustomerID { get; set; }
-    public string PasswordHash { get; set; }
+    public required int LoginID { get; set; }
+    public required int CustomerID { get; set; }
+    public required string PasswordHash { get; set; }
 }

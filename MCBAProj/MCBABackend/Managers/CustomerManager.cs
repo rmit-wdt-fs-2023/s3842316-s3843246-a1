@@ -62,7 +62,7 @@ public class CustomerManager : AbstractDBManager
     {
         var accountManager = new AccountManager(ConnectionStr);
         var credentialManager = new CredentialManager(ConnectionStr);
-        var customer = new Customer()
+        return new Customer()
         {
             CustomerID = row.Field<int>(nameof(Customer.CustomerID)),
             Name = row.Field<string>(nameof(Customer.Name)),
@@ -74,7 +74,6 @@ public class CustomerManager : AbstractDBManager
 
             Accounts = accountManager.GetAccounts(row.Field<int>(nameof(Customer.CustomerID))),
             Login = credentialManager.GetCredentials(row.Field<int>(nameof(Customer.CustomerID)))
-        };
-        return customer;
+        };   
     }
 }
