@@ -52,6 +52,11 @@
 	       // Runs the main system new Menu(credentialManager,
 	       customerManager, accountManager, transactionManager).Run();
 
+### F) Class Library
+> Class Library - MCBABackend
+> MCBABackend Library separates the SQL(Database) form the implementation of the application.
+> Benefit - Objects and their corresponding are broken down, complex code can be broken into many smaller, simpler segments
+
 
 
 
