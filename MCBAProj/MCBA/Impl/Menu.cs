@@ -14,7 +14,7 @@ public class Menu
     private readonly CustomerManager _customerManager;
 	private readonly AccountManager _accountManager;
 	private readonly TransactionManager _transactionManager;
-	private Customer _customer;
+	private Customer? _customer;
 	 
 	public Menu(CredentialManager credentialManager,
 		CustomerManager customerManager, AccountManager accountManager,
@@ -70,16 +70,22 @@ public class Menu
 							_customer).Run();
                         break;
                     case 5:
-						Run();
-                        break;
-                    case 6:
+						_customer = null;
+						login = null;
 						exit = true;
-                        break;
+						Console.Clear();
+                        Run();
+						continue;
+                    case 6:
+                        _customer = null;
+                        login = null;
+						exit = true;
+                        Console.Clear();
+                        continue;
 					default:
 						throw new UnreachableException();
                 }
 			}
-            Console.WriteLine("Good bye!");
         }
         else
 			PrintErrMsg("Missing Data in Database");
