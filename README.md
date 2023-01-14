@@ -57,9 +57,41 @@
 > MCBABackend Library separates the SQL(Database) form the implementation of the application.
 > Benefit - Objects and their corresponding are broken down, complex code can be broken into many smaller, simpler segments
 
+### F) Required Keyword
+- Where - 'MCBABackend/Model/DTO.cs'
 
+-  Brief Explanation
+	> For e.g. when placing instance variables in a class there is no check available to insure that   			  
+		those variable have been initialised. But with the help of 'required' keyword we can insure that we do initialise them in the constructor.
+		
+- An Example when we have required keyword - 
+		
+		public class Customer
+		{
+		    public required int CustomerID { get; init; }
+		    public required string Name { get; init; }
+		    public required string? Address { get; init; }
+		    public required string? City { get; init; }
+		    public required int? PostCode { get; init; }
+		    public required List<Account> Accounts { get; init; }
+		    public required Credential Login { get; init; }
+		} 
+	> Code that class the constructor - 
+	
+	   return new Customer()
+        {
+	        // Because I have commented line below out the code won't compile
+            // CustomerID = row.Field<int>(nameof(Customer.CustomerID)),
+            
+            Name = row.Field<string>(nameof(Customer.Name)),
+            Address = row.Field<string?>(nameof(Customer.Address)),
+            City = row.Field<string?>(nameof(Customer.City)),
 
+            PostCode = row.Field<string?>(nameof(Customer.PostCode))
+            != null ? int.Parse(row.Field<string?>(nameof(Customer.PostCode))) : null,
 
-
-			
-			 
+            Accounts = accountManager.GetAccounts(row.Field<int>(nameof(Customer.CustomerID))),
+            Login = credentialManager.GetCredentials(row.Field<int>(nameof(Customer.CustomerID)))
+        }; 
+	> Because CustomerID is set to required in DTO the code won't compile  
+		
