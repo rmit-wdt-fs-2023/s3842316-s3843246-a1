@@ -10,10 +10,8 @@ public class Transfer : AbstractTransactions
 {
     private Account _destAccount;
 
-    public Transfer(AccountManager accountManager,
-        TransactionManager transactionManager, Customer customer) :
-        base(accountManager, transactionManager, customer)
-    { }
+    public Transfer(DBManagerFactory manager, Customer customer) :
+        base(manager, customer) { }
 
     public override void Run()
     {

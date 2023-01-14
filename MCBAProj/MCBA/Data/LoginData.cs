@@ -12,10 +12,10 @@ public class LoginData
     private string _passwordHash;
     private Credential _credential;
 
-    public LoginData(CredentialManager credentialManager, CustomerManager customerManager)
+    public LoginData(DBManagerFactory manager)
     {
-        _credentialManager = credentialManager;
-        _customerManager = customerManager;
+        _credentialManager = manager._credentialManager;
+        _customerManager = manager._customerManager;
     }
 
     public void ReadAndValidate()

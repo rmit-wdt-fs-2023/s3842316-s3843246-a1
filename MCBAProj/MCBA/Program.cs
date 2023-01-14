@@ -16,17 +16,13 @@ public class Program
         var connectionStr = Connection.GetConnection();
         if (connectionStr != null)
         {
-            var customerManager = new CustomerManager(connectionStr);
-            var accountManager = new AccountManager(connectionStr);
-            var transactionManager = new TransactionManager(connectionStr);
-            var credentialManager = new CredentialManager(connectionStr);
-
+            var dbManagerFactory = new DBManagerFactory(connectionStr);
+       
             // Populationg Database if empty
-            WebService.FetchAndPostWebCustomers(customerManager, accountManager,
-                transactionManager, credentialManager);
+            WebService.FetchAndPostWebCustomers(dbManagerFactory);
 
             // Runs the main system
-            new Menu(credentialManager, customerManager, accountManager, transactionManager).Run();
+            new Menu(dbManagerFactory).Run();
         }
         else
         {

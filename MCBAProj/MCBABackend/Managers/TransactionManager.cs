@@ -4,18 +4,13 @@ using MCBA.Model;
 using MCBA.Utils;
 namespace MCBA.Managers;
 
-public class TransactionManager
+public class TransactionManager : AbstractDBManager
 {
-    private readonly string _connectionStr;
-
-    public TransactionManager(string connectionStr)
-    {
-        _connectionStr = connectionStr;
-    }
+    public TransactionManager(string connection) : base(connection) { }
 
     public void InsertTransaction(Transaction transaction)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
@@ -41,7 +36,7 @@ public class TransactionManager
 
     public List<Transaction> GetTransactions(int accountNumber)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();

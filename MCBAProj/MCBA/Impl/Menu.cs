@@ -10,25 +10,17 @@ namespace MCBA.Impl.Run;
 
 public class Menu
 {
-    private readonly CredentialManager _credentialManager;
-    private readonly CustomerManager _customerManager;
-	private readonly AccountManager _accountManager;
-	private readonly TransactionManager _transactionManager;
+	private readonly DBManagerFactory _manager;
 	private Customer? _customer;
 	 
-	public Menu(CredentialManager credentialManager,
-		CustomerManager customerManager, AccountManager accountManager,
-		TransactionManager transactionManager)
+	public Menu(DBManagerFactory managers)
 	{
-		_credentialManager = credentialManager;
-		_customerManager = customerManager;
-		_accountManager = accountManager;
-		_transactionManager = transactionManager;
+		_manager = managers;
 	}
 
 	public void Run()
 	{
-		var login = new LoginData(_credentialManager, _customerManager);
+		var login = new LoginData(_manager);
 		login.ReadAndValidate();
 		_customer = login.GetCustomer();
 
@@ -54,19 +46,16 @@ public class Menu
                 switch (option)
 				{
 					case 1:
-						new Deposit(_accountManager,
-							 _transactionManager, _customer).Run();
+						new Deposit(_manager, _customer).Run();
 						break;
 					case 2:
-                        new Withdraw(_accountManager,
-                             _transactionManager, _customer).Run();
+                        new Withdraw(_manager, _customer).Run();
                         break;
                     case 3:
-						new Transfer(_accountManager,
-                             _transactionManager, _customer).Run();
+						new Transfer(_manager, _customer).Run();
                         break;
                     case 4:
-                        new MyStatements(_accountManager,
+                        new MyStatements(_manager._accountManager,
 							_customer).Run();
                         break;
                     case 5:

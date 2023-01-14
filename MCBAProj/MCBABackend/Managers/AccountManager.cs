@@ -6,24 +6,19 @@ using MCBA.Utils;
 
 namespace MCBA.Managers;
 
-public class AccountManager
+public class AccountManager : AbstractDBManager
 {
-    private readonly string _connectionStr;
-
-    public AccountManager(string connectionStr)
-    {
-        _connectionStr = connectionStr;
-    }
+    public AccountManager(string connection) : base(connection) { }
 
     public List<Account> All()
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT * from dbo.[Account]";
 
-        var transactionManager = new TransactionManager(_connectionStr);
+        var transactionManager = new TransactionManager(ConnectionStr);
 
         return cmd.GetDataTable().Select().Select(x => new Account
         {
@@ -38,7 +33,7 @@ public class AccountManager
 
     public void InsertAccount(Account account)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
@@ -56,7 +51,7 @@ public class AccountManager
 
     public List<Account> GetAccounts(int customerId)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
@@ -64,7 +59,7 @@ public class AccountManager
         cmd.CommandText = "SELECT * FROM dbo.[Account] WHERE CustomerID = @customerId";
         cmd.Parameters.AddWithValue(nameof(customerId), customerId);
 
-        var transactionManager = new TransactionManager(_connectionStr);
+        var transactionManager = new TransactionManager(ConnectionStr);
 
         return cmd.GetDataTable().Select().Select(x => new Account
         {
@@ -79,7 +74,7 @@ public class AccountManager
 
     public void UpdateBalance(int accountNumber, decimal balance)
     {
-        using var connection = new SqlConnection(_connectionStr);
+        using var connection = new SqlConnection(ConnectionStr);
         connection.Open();
 
         using var cmd = connection.CreateCommand();
