@@ -18,6 +18,7 @@ public class LoginData
         _customerManager = manager._customerManager;
     }
 
+    // Reads user login input and validates with databse if exists
     public void ReadAndValidate()
     {
         while (true)

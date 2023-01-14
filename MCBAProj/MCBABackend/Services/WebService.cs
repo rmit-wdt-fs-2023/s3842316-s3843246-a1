@@ -15,14 +15,12 @@ public static class WebService
         if (manager._customerManager.Exists())
 			return;
 
-		using var client = new HttpClient();
-		var json = client.GetStringAsync(_url).Result;
+        var json = GetJsonAsync().Result;
 
 		var customers = JsonConvert.DeserializeObject<List<Customer>>(json, new JsonSerializerSettings
 		{
 			DateFormatString = "dd/MM/yyyy hh:mm:ss tt"
 		});
-
 
 		// Checks if list is not null 
 		if (customers.Any())
@@ -50,8 +48,16 @@ public static class WebService
 		}
 	}
 
-	// Calculates Balance through transactions
-	private static decimal ComputeBalance(Account account)
+	// 
+	private static async Task<string> GetJsonAsync()
+	{
+        using var client = new HttpClient();
+        var response = await client.GetStringAsync(_url);
+		return response;
+    }
+
+    // Calculates Balance through transactions
+    private static decimal ComputeBalance(Account account)
 	{
 		decimal balance = 0;
 		foreach (var transaction in account.Transactions)

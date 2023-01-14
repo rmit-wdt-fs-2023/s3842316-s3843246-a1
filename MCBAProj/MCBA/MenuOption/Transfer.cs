@@ -24,6 +24,7 @@ public class Transfer : AbstractTransactions
         }
     }
 
+    // Calls required methods
     private void TransferMoney(Account account)
     {
         int? destAccountNumber = ValidateDestinationAccount(account);
@@ -58,6 +59,7 @@ public class Transfer : AbstractTransactions
         }
     }
 
+    // Withdraw database calls
     private void WithdrawBackendCalls(Account account, decimal amount,
         string comment)
     {
@@ -100,6 +102,7 @@ public class Transfer : AbstractTransactions
         Console.WriteLine($"Transfer of {amount:C} successful, account balance now {accountNewBalance:C}");
     }
 
+    // Transfer database calls
     private void TransferBackendCalls(decimal amount, string comment)
     {
 
@@ -118,6 +121,7 @@ public class Transfer : AbstractTransactions
         _accountManager.UpdateBalance(_destAccount.AccountNumber, accountNewBalance);
     }
 
+    // Checks if destination account exists
     private int? ValidateDestinationAccount(Account account)
     {
         Console.Write($"Enter destination account number: ");

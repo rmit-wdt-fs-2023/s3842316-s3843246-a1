@@ -19,8 +19,10 @@ public abstract class AbstractTransactions
     }
 
     public abstract void Run();
+
     protected abstract void PrintMenu();
 
+    // UI for comment input
     protected string GetCommentInput()
     {
         Console.Write("Enter comment (n to quit, max length 30: ");
@@ -45,12 +47,14 @@ public abstract class AbstractTransactions
         return comment;
     }
 
+    // Checks if service fee is required or not
     protected bool ServiceFeeRequired(int accountNo)
     {
         int noOfTransactions = GetNoOfTransactions(accountNo);
         return noOfTransactions > MaxFreeTransactionsAllowed ? true : false;
     }
 
+    // Returnes No of Widthraw or Transfer transactions
     protected int GetNoOfTransactions(int accountNo)
     {
         List<Transaction> transactions = _transactionManager.GetTransactions(accountNo);

@@ -8,6 +8,7 @@ public class CredentialManager : AbstractDBManager
 {
     public CredentialManager(string connection) : base(connection) { }
 
+    // Inserts new Login details in databse
     public void InsertCredential(Credential credential)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -25,6 +26,7 @@ public class CredentialManager : AbstractDBManager
         cmd.ExecuteNonQuery();
     }
 
+    // Returns login details of the loginId
     public Credential GetCredentials(int loginId)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -40,6 +42,7 @@ public class CredentialManager : AbstractDBManager
         return row != null ? ToCredential(row) : null;
     }
 
+    // Converts datarow to credential object
     private Credential ToCredential(DataRow row)
     {
         var credential = new Credential()

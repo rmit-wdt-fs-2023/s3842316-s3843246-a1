@@ -42,6 +42,7 @@ public class Deposit : AbstractTransactions
         }
     }
 
+    // Deposits money in databse
     private void DepositBackendCalls(Account account, decimal amount,
         string comment)
     {
@@ -63,6 +64,7 @@ public class Deposit : AbstractTransactions
         Console.WriteLine($"Deposit of {amount:C} successful, account balance now {accountNewBalance:C}");
     }
 
+    // Amount Validation
     private decimal? AmountValidation()
     {
         var usrInput = Console.ReadLine();

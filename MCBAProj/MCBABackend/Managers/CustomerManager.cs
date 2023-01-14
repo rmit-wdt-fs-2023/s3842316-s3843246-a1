@@ -10,6 +10,7 @@ public class CustomerManager : AbstractDBManager
 {
     public CustomerManager(string connection) : base(connection) { }
 
+    // Check if any line of data exists in customer databse
     public bool Exists()
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -23,6 +24,7 @@ public class CustomerManager : AbstractDBManager
         return count > 0;
     }
 
+    // Inserts new customer in databse
     public void InsertCustomer(Customer customer)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -43,6 +45,7 @@ public class CustomerManager : AbstractDBManager
         cmd.ExecuteNonQuery();
     }
 
+    // Gets customer where customer id matches
     public Customer GetCustomer(Credential credential)
     {
         using var connection = new SqlConnection(ConnectionStr);
@@ -58,6 +61,7 @@ public class CustomerManager : AbstractDBManager
         return row != null ? ToCustomer(row) : null;
     }
 
+    // Convers datarow to customer object
     private Customer ToCustomer(DataRow row)
     {
         var accountManager = new AccountManager(ConnectionStr);
