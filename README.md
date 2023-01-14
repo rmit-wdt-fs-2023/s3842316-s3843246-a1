@@ -1,1 +1,115 @@
 # s3842316-s3843246-a1
+
+## [GitHub Link(Main Branch)](https://github.com/rmit-wdt-fs-2023/s3842316-s3843246-a1) 
+
+
+	Note: This file is written in markdown please go to github page for prettier version:)
+	Group No: 3
+	Solution File Path : s3842316-s3843246-a1/MCBAProj/MCBAProj.sln
+	ID: S3842316 - Name: Sahibjeet Singh
+	ID: s3843246 - Name: Rishiktrishwa Rao
+
+### F) Design Patterns
+ 1. Dependency Injection
+	 - Used - Files 'MCBA/Program.cs' -> 'MCBABackend/Managers/DBManagerFactory',  'MCBA/Impl/Menu.cs' -> 'MCBA/MenuOptions/AbstractTransactions.cs', 'MCBA/MenuOptions/MyStatements.cs' 
+	- Where - 'Program.cs'
+	- Line - '22', '25'
+		- 'Program.cs' Constructor Injector - 
+			>  var dbManagerFactory = new DBManagerFactory(connectionStr);				
+			>  WebService.FetchAndPostWebCustomers(dbManagerFactory);
+			>             new Menu(dbManagerFactory).Run();
+	- Where - 'Program.cs'
+	- Line - '20', '46', '49', '52', '55'
+		 - 'Menu.cs ' Constructor Injector - 
+			 > var login = new LoginData(_manager);
+			 > new Deposit(_manager, _customer).Run();
+			 > new Withdraw(_manager, _customer).Run();
+			 > new Transfer(_manager, _customer).Run();
+			 > new MyStatements(_manager, _customer).Run();
+	- Short Summary -
+		>Design pattern in which an object receives other objects that it depends on.
+	- Advantage in Proj
+		> Reduced code/code duplication
+		
+
+		 > Without using injection new instance of required class will be required in all corresponding classes, If code is changed or new class is added or required all constructs will need to be updated 
+		 
+		> By using this code is reduce and if in future connection string is changed OR new class is added in Factory the constructors won't need to be changed.
+
+2. Factory
+	 - Used - Files 'MCBABackend/Managers/DBManagerFactory', Program.cs
+	- Where - 'Program.cs'
+	- - Line - '22', '25'
+		- 'Program.cs'  - 
+			>  var dbManagerFactory = new DBManagerFactory(connectionStr);				
+		 - 'DBManagerFactory ' 
+	- Short Summary -
+		> We can create the object without exposing the creation logic to the client and refer to newly created object using a common interface even tho an interface is not an integral part of this pattern. In my project interface is not used instead accusers are used and all obj are constructed with the constructor
+		
+	- Advantage in Proj
+		> Reduced code/code duplication
+		
+		> No multiple instances of object
+		
+	- Without using injection code would look like this - 
+	
+	       var customerManager = new CustomerManager(connectionStr); 
+	       var accountManager = new AccountManager(connectionStr); 
+	       var transactionManager = new TransactionManager(connectionStr);
+	       var credentialManager = new CredentialManager(connectionStr);
+	       
+	       // Populationg Database if empty
+	       WebService.FetchAndPostWebCustomers(customerManager,
+	       accountManager, transactionManager, credentialManager);
+	       
+	       // Runs the main system new Menu(credentialManager,
+	       customerManager, accountManager, transactionManager).Run();
+
+### F) Class Library
+> Class Library - MCBABackend
+> MCBABackend Library separates the SQL(Database) form the implementation of the application.
+> Benefit - Objects and their corresponding are broken down, complex code can be broken into many smaller, simpler segments
+
+### F) Required Keyword
+- Where - 'MCBABackend/Model/DTO.cs'
+
+-  Brief Explanation
+	> For e.g. when placing instance variables in a class there is no check available to insure that   			  
+		those variable have been initialised. But with the help of 'required' keyword we can insure that we do initialise them in the constructor.
+		
+- An Example when we have required keyword - 
+		
+		public class Customer
+		{
+		    public required int CustomerID { get; init; }
+		    public required string Name { get; init; }
+		    public required string? Address { get; init; }
+		    public required string? City { get; init; }
+		    public required int? PostCode { get; init; }
+		    public required List<Account> Accounts { get; init; }
+		    public required Credential Login { get; init; }
+		} 
+	> Code that class the constructor - 
+	
+	   return new Customer()
+        {
+	        // Because I have commented line below out the code won't compile
+            // CustomerID = row.Field<int>(nameof(Customer.CustomerID)),
+            
+            Name = row.Field<string>(nameof(Customer.Name)),
+            Address = row.Field<string?>(nameof(Customer.Address)),
+            City = row.Field<string?>(nameof(Customer.City)),
+
+            PostCode = row.Field<string?>(nameof(Customer.PostCode))
+            != null ? int.Parse(row.Field<string?>(nameof(Customer.PostCode))) : null,
+
+            Accounts = accountManager.GetAccounts(row.Field<int>(nameof(Customer.CustomerID))),
+            Login = credentialManager.GetCredentials(row.Field<int>(nameof(Customer.CustomerID)))
+        }; 
+	> Because CustomerID is set to required in DTO the code won't compile  
+	
+### F) Async Await keyword 
+- Where - 'MCBABackend/Model/DTO.cs'
+	- Line - "53-58", "18"
+
+	> Async and Await are used in my application when retrieving data from Web Api - The only real benefit of using it here is responsiveness. Which won't matter a lot at this stage because the precede with with next execution the json string is required. It hasn't changed my code a lot. But in if application was large handling big data sets this feature could come very handy. We can commence other tasks while data is being processed.
